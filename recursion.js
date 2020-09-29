@@ -49,25 +49,26 @@ function reverseStrWithIteration(str) {
 
   //DECODE WAYS MY OWN SOLUTION
   var numDecodings = function(s) {
-    if (s[0] === "0" || parseInt(s) === 0) {
-        return 0
-    } else if (s.length <= 2) {
-        if (s.length === 2 && parseInt(s) <= 26) {
-            return s[1] === "0" ? 1 : 2
-        } else if (s.length === 2 && parseInt(s) > 26) {
-            return s.includes("0") ? 0 : 1
-        } else if(s.length === 1 && s !== "0") {
-            return 1
-        } else {
-            return 0
-        }
-    } else if (s.length > 2) {
-        if(parseInt(s.substr(0,2)) > 26) {
-            return numDecodings(s.substr(1,s.length))
-        } else {
-            return numDecodings(s.substr(1,s.length)) + numDecodings(s.substr(2,s.length))    
-        }
-    } else {
-        return 0
+    if(s[0] === "0") {
+        return 0 // No ways to decode
     }
-};
+    
+    switch(s.length) {
+      case 1:
+        return 1
+        break;
+      case 2:
+        if (parseInt(s) > 26) {
+          return s[1] === "0" ? 0 : 1
+        } else {
+          return s[1] === "0" ? 1 : 2
+        }
+        break;
+      default:
+        if(parseInt(s.substr(0,2)) > 26) {
+          return numDecodings(s.substr(1,s.length))
+        } else {
+          return numDecodings(s.substr(1,s.length)) + numDecodings(s.substr(2,s.length))    
+        }
+    }
+  };
