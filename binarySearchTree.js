@@ -149,6 +149,7 @@ class BinarySearchTree {
     return this
   }
   breadthFirstSearch() {
+  
     let currentNode = this.root
     let list = []
     let queue = []
@@ -176,10 +177,8 @@ class BinarySearchTree {
     // and we return the list
     return list
   }
-
   breadthFirstSearchRecursive(queue, list) {
     // we need to call the function with the node we want to start in a binary this would be to root node
-    // in recursive solutions we keep our variables as arguments
     
     if(!queue.length) {
       return list
@@ -197,6 +196,59 @@ class BinarySearchTree {
     return this.breadthFirstSearchRecursive(queue, list)
   }
 
+//       9
+//    6      14
+//   5     10  20
+//               170
+  dfsInOrder() { // => 5, 6, 9, 10, 14, 20, 170
+    return traverseInOrder(this.root, [])
+  }
+  dfsPreOrder() { // => 9, 6, 5, 14, 10, 20, 170
+    return traversePreOrder(this.root, [])
+  }
+  dfsPostOrder() { // => 5, 6, 10, 170, 20, 14, 9
+    return traversePostOrder(this.root, [])
+  }
+    //example:
+    //    101
+    //  33   105
+    // 3 ways to traverse a tree or graph with DFS:
+    // 1- inorder: 33, 101, 105 
+    // 2- preorder: 101, 33, 105 (good for recreating the tree)
+    // 3- postorder: 33, 105, 101
+}
+
+function traverseInOrder(node, list) {
+  if(node.left) {
+    traverseInOrder(node.left, list) 
+  }
+  list.push(node.value)
+  if(node.right) {
+    traverseInOrder(node.right, list) 
+  }
+  return list
+}
+
+function traversePreOrder(node, list) {
+  list.push(node.value)
+  if(node.left) {
+    traversePreOrder(node.left, list) 
+  }
+  if(node.right) {
+    traversePreOrder(node.right, list) 
+  }
+  return list
+}
+
+function traversePostOrder(node, list) {
+  if(node.left) {
+    traversePostOrder(node.left, list) 
+  }
+  if(node.right) {
+    traversePostOrder(node.right, list) 
+  }
+  list.push(node.value)
+  return list
 }
 
 function traverse(node) {
@@ -226,10 +278,67 @@ myBST.insert(170)
 
 // JSON.stringify(traverse(myBST.root))
 // myBST.breadthFirstSearch() => [9, 6, 14, 5, 10, 20, 170]
-myBST.breadthFirstSearchRecursive([myBST.root], [])
+// myBST.breadthFirstSearchRecursive([myBST.root], [])
+console.log(myBST.dfsInOrder())
+console.log(myBST.dfsPreOrder())
+console.log(myBST.dfsPostOrder())
 
 
 //       9
 //    6      14
 //   5     10  20
 //               170
+
+// VALIDATE BINARY SEARCH TREE
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {boolean}
+ */
+
+// was so hard at first :))
+var isValidBST = function(root) {
+    if(!root) {
+        return true
+    }
+    
+    let currentNode = root
+    currentNode.min = null
+    currentNode.max = null
+    let queue = []
+    
+    queue.push(currentNode)
+    
+    while(queue.length > 0) {
+        currentNode = queue.shift()
+        
+        if(currentNode.right) {
+            currentNode.right.min = currentNode.val
+            currentNode.right.max = currentNode.max
+            queue.push(currentNode.right)
+            console.log(currentNode.val)
+            if(currentNode.val >= currentNode.right.val || (currentNode.right.val >= currentNode.max && currentNode.max) || (currentNode.min && currentNode.right.val <= currentNode.min)) {
+                return false
+            }
+        }
+        
+        if(currentNode.left) {
+            currentNode.left.min = currentNode.min
+            currentNode.left.max = currentNode.val
+            queue.push(currentNode.left)
+            if(currentNode.val <= currentNode.left.val || (currentNode.max && currentNode.left.val >= currentNode.max) || (currentNode.min && currentNode.left.val <= currentNode.min)) {
+                return false
+            }
+        }
+        
+    }
+    
+    return true
+};
